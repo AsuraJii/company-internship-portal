@@ -1,0 +1,84 @@
+<?php
+
+session_start();
+
+include "db.php";
+
+if (!isset($_SESSION['company_id'])) {
+
+    header("Location: login.php");
+    exit();
+
+}
+
+$message = "";
+
+if (isset($_POST['add_internship'])) {
+
+    $title = $_POST['title'];
+    $location = $_POST['location'];
+    $duration = $_POST['duration'];
+    $stipend = $_POST['stipend'];
+    $last_date = $_POST['last_date'];
+
+    $company_id = $_SESSION['company_id'];
+
+    $sql = "INSERT INTO internships
+            (company_id, title, location, duration, stipend, last_date)
+            VALUES
+            ('$company_id', '$title', '$location', '$duration', '$stipend', '$last_date')";
+
+    if (mysqli_query($conn, $sql)) {
+
+        $message = "Internship added successfully";
+
+    } else {
+
+        $message = "Something went wrong";
+
+    }
+}
+
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Internship</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="form-container">
+
+    <h2>Add Internship</h2>
+
+    <p><?php echo $message; ?></p>
+
+    <form method="POST">
+
+        <label>Internship Title</label>
+        <input type="text" name="title" required>
+
+        <label>Location</label>
+        <input type="text" name="location" required>
+
+        <label>Duration</label>
+        <input type="text" name="duration" placeholder="Example: 3 Months" required>
+
+        <label>Stipend</label>
+        <input type="text" name="stipend" placeholder="Example: ₹10000/month" required>
+
+        <label>Last Date to Apply</label>
+        <input type="date" name="last_date" required>
+
+        <button type="submit" name="add_internship">Add Internship</button>
+
+    </form>
+
+    <a href="dashboard.php">Back to Dashboard</a>
+
+</div>
+
+</body>
+</html>

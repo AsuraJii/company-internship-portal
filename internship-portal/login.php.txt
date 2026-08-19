@@ -1,0 +1,78 @@
+<?php
+
+session_start();
+
+include "db.php";
+
+$message = "";
+
+if (isset($_POST['login'])) {
+
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    $sql = "SELECT * FROM companies WHERE email = '$email'";
+
+    $result = mysqli_query($conn, $sql);
+
+    if (mysqli_num_rows($result) == 1) {
+
+        $company = mysqli_fetch_assoc($result);
+
+        if (password_verify($password, $company['password'])) {
+
+            $_SESSION['company_id'] = $company['id'];
+            $_SESSION['company_name'] = $company['company_name'];
+
+            header("Location: dashboard.php");
+            exit();
+
+        } else {
+
+            $message = "Wrong password";
+
+        }
+
+    } else {
+
+        $message = "Company not found";
+
+    }
+}
+
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Company Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="form-container">
+
+    <h2>Company Login</h2>
+
+    <p><?php echo $message; ?></p>
+
+    <form method="POST">
+
+        <label>Email</label>
+        <input type="email" name="email" required>
+
+        <label>Password</label>
+        <input type="password" name="password" required>
+
+        <button type="submit" name="login">Login</button>
+
+    </form>
+
+    <p>New company?</p>
+
+    <a href="register.php">Register</a>
+
+</div>
+
+</body>
+</html>
